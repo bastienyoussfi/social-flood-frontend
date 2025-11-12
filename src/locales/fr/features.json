@@ -1,0 +1,112 @@
+{
+  "features": {
+    "dashboard": {
+      "title": "Tableau de bord",
+      "subtitle": "Aperçu de votre activité sur les réseaux sociaux",
+      "welcomeBack": "Bon retour",
+      "stats": {
+        "totalPosts": "Publications totales",
+        "scheduledPosts": "Publications programmées",
+        "connectedAccounts": "Comptes connectés",
+        "totalEngagement": "Engagement total"
+      },
+      "recentActivity": "Activité récente",
+      "quickActions": "Actions rapides"
+    },
+    "posting": {
+      "title": "Créer une publication",
+      "subtitle": "Publiez du contenu sur vos plateformes de réseaux sociaux",
+      "composer": {
+        "placeholder": "Que voulez-vous partager ?",
+        "addMedia": "Ajouter un média",
+        "selectPlatforms": "Sélectionner les plateformes",
+        "characterCount": "{{count}} / {{max}} caractères"
+      },
+      "platforms": {
+        "twitter": "Twitter",
+        "linkedin": "LinkedIn"
+      },
+      "actions": {
+        "publish": "Publier maintenant",
+        "schedule": "Programmer",
+        "saveDraft": "Enregistrer comme brouillon"
+      },
+      "emptyState": {
+        "title": "Commencez à créer votre publication",
+        "description": "Partagez votre contenu sur plusieurs plateformes à la fois"
+      }
+    },
+    "scheduling": {
+      "title": "Publications programmées",
+      "subtitle": "Gérez votre contenu programmé",
+      "calendar": {
+        "title": "Vue du calendrier",
+        "today": "Aujourd'hui",
+        "week": "Semaine",
+        "month": "Mois"
+      },
+      "emptyState": {
+        "title": "Aucune publication programmée",
+        "description": "Programmez des publications pour les publier automatiquement au moment idéal"
+      }
+    },
+    "analytics": {
+      "title": "Analytiques",
+      "subtitle": "Suivez vos performances sur les réseaux sociaux",
+      "metrics": {
+        "engagement": "Engagement",
+        "reach": "Portée",
+        "impressions": "Impressions",
+        "clicks": "Clics"
+      },
+      "dateRange": {
+        "last7Days": "7 derniers jours",
+        "last30Days": "30 derniers jours",
+        "last90Days": "90 derniers jours",
+        "custom": "Période personnalisée"
+      },
+      "emptyState": {
+        "title": "Aucune donnée analytique pour le moment",
+        "description": "Commencez à publier pour voir vos métriques de performance"
+      }
+    },
+    "accounts": {
+      "title": "Comptes connectés",
+      "subtitle": "Gérez vos comptes de réseaux sociaux",
+      "connectAccount": "Connecter un compte",
+      "connectedOn": "Connecté le {{date}}",
+      "disconnect": "Déconnecter",
+      "emptyState": {
+        "title": "Aucun compte connecté",
+        "description": "Connectez vos comptes de réseaux sociaux pour commencer à publier"
+      }
+    },
+    "contentLibrary": {
+      "title": "Bibliothèque de contenu",
+      "subtitle": "Organisez vos médias et modèles",
+      "tabs": {
+        "media": "Médias",
+        "templates": "Modèles"
+      },
+      "upload": "Télécharger un média",
+      "emptyState": {
+        "title": "Aucun fichier média",
+        "description": "Téléchargez des images et des vidéos à utiliser dans vos publications"
+      }
+    },
+    "settings": {
+      "title": "Paramètres",
+      "subtitle": "Gérez vos préférences",
+      "sections": {
+        "general": "Général",
+        "notifications": "Notifications",
+        "preferences": "Préférences",
+        "account": "Compte"
+      },
+      "emptyState": {
+        "title": "Paramètres",
+        "description": "Configurez vos préférences d'application"
+      }
+    }
+  }
+}

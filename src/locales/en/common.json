@@ -1,0 +1,74 @@
+{
+  "common": {
+    "actions": {
+      "save": "Save",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "edit": "Edit",
+      "close": "Close",
+      "create": "Create",
+      "update": "Update",
+      "search": "Search",
+      "filter": "Filter",
+      "export": "Export",
+      "import": "Import",
+      "back": "Back",
+      "next": "Next",
+      "previous": "Previous",
+      "submit": "Submit",
+      "reset": "Reset",
+      "confirm": "Confirm",
+      "viewAll": "View All"
+    },
+    "labels": {
+      "email": "Email",
+      "password": "Password",
+      "name": "Name",
+      "username": "Username",
+      "status": "Status",
+      "date": "Date",
+      "time": "Time",
+      "language": "Language",
+      "theme": "Theme"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "pending": "Pending",
+      "completed": "Completed",
+      "draft": "Draft",
+      "scheduled": "Scheduled",
+      "published": "Published",
+      "failed": "Failed"
+    },
+    "validation": {
+      "required": "This field is required",
+      "invalidEmail": "Invalid email address",
+      "tooShort": "Value is too short",
+      "tooLong": "Value is too long"
+    },
+    "messages": {
+      "loading": "Loading...",
+      "noData": "No data available",
+      "error": "An error occurred",
+      "success": "Success",
+      "savedSuccessfully": "Saved successfully",
+      "deletedSuccessfully": "Deleted successfully",
+      "comingSoon": "Coming soon"
+    },
+    "navigation": {
+      "dashboard": "Dashboard",
+      "posting": "Posting",
+      "scheduling": "Scheduling",
+      "analytics": "Analytics",
+      "accounts": "Accounts",
+      "contentLibrary": "Content Library",
+      "settings": "Settings"
+    },
+    "theme": {
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    }
+  }
+}

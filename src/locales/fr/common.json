@@ -1,0 +1,74 @@
+{
+  "common": {
+    "actions": {
+      "save": "Enregistrer",
+      "cancel": "Annuler",
+      "delete": "Supprimer",
+      "edit": "Modifier",
+      "close": "Fermer",
+      "create": "Créer",
+      "update": "Mettre à jour",
+      "search": "Rechercher",
+      "filter": "Filtrer",
+      "export": "Exporter",
+      "import": "Importer",
+      "back": "Retour",
+      "next": "Suivant",
+      "previous": "Précédent",
+      "submit": "Soumettre",
+      "reset": "Réinitialiser",
+      "confirm": "Confirmer",
+      "viewAll": "Voir tout"
+    },
+    "labels": {
+      "email": "Email",
+      "password": "Mot de passe",
+      "name": "Nom",
+      "username": "Nom d'utilisateur",
+      "status": "Statut",
+      "date": "Date",
+      "time": "Heure",
+      "language": "Langue",
+      "theme": "Thème"
+    },
+    "status": {
+      "active": "Actif",
+      "inactive": "Inactif",
+      "pending": "En attente",
+      "completed": "Terminé",
+      "draft": "Brouillon",
+      "scheduled": "Programmé",
+      "published": "Publié",
+      "failed": "Échoué"
+    },
+    "validation": {
+      "required": "Ce champ est requis",
+      "invalidEmail": "Adresse email invalide",
+      "tooShort": "La valeur est trop courte",
+      "tooLong": "La valeur est trop longue"
+    },
+    "messages": {
+      "loading": "Chargement...",
+      "noData": "Aucune donnée disponible",
+      "error": "Une erreur s'est produite",
+      "success": "Succès",
+      "savedSuccessfully": "Enregistré avec succès",
+      "deletedSuccessfully": "Supprimé avec succès",
+      "comingSoon": "Bientôt disponible"
+    },
+    "navigation": {
+      "dashboard": "Tableau de bord",
+      "posting": "Publication",
+      "scheduling": "Planification",
+      "analytics": "Analytiques",
+      "accounts": "Comptes",
+      "contentLibrary": "Bibliothèque de contenu",
+      "settings": "Paramètres"
+    },
+    "theme": {
+      "light": "Clair",
+      "dark": "Sombre",
+      "system": "Système"
+    }
+  }
+}

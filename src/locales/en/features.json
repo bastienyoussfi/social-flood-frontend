@@ -1,0 +1,112 @@
+{
+  "features": {
+    "dashboard": {
+      "title": "Dashboard",
+      "subtitle": "Overview of your social media activity",
+      "welcomeBack": "Welcome back",
+      "stats": {
+        "totalPosts": "Total Posts",
+        "scheduledPosts": "Scheduled Posts",
+        "connectedAccounts": "Connected Accounts",
+        "totalEngagement": "Total Engagement"
+      },
+      "recentActivity": "Recent Activity",
+      "quickActions": "Quick Actions"
+    },
+    "posting": {
+      "title": "Create Post",
+      "subtitle": "Publish content across your social media platforms",
+      "composer": {
+        "placeholder": "What do you want to share?",
+        "addMedia": "Add Media",
+        "selectPlatforms": "Select Platforms",
+        "characterCount": "{{count}} / {{max}} characters"
+      },
+      "platforms": {
+        "twitter": "Twitter",
+        "linkedin": "LinkedIn"
+      },
+      "actions": {
+        "publish": "Publish Now",
+        "schedule": "Schedule",
+        "saveDraft": "Save as Draft"
+      },
+      "emptyState": {
+        "title": "Start creating your post",
+        "description": "Share your content across multiple platforms at once"
+      }
+    },
+    "scheduling": {
+      "title": "Scheduled Posts",
+      "subtitle": "Manage your scheduled content",
+      "calendar": {
+        "title": "Calendar View",
+        "today": "Today",
+        "week": "Week",
+        "month": "Month"
+      },
+      "emptyState": {
+        "title": "No scheduled posts",
+        "description": "Schedule posts to publish them automatically at the perfect time"
+      }
+    },
+    "analytics": {
+      "title": "Analytics",
+      "subtitle": "Track your social media performance",
+      "metrics": {
+        "engagement": "Engagement",
+        "reach": "Reach",
+        "impressions": "Impressions",
+        "clicks": "Clicks"
+      },
+      "dateRange": {
+        "last7Days": "Last 7 days",
+        "last30Days": "Last 30 days",
+        "last90Days": "Last 90 days",
+        "custom": "Custom range"
+      },
+      "emptyState": {
+        "title": "No analytics data yet",
+        "description": "Start posting to see your performance metrics"
+      }
+    },
+    "accounts": {
+      "title": "Connected Accounts",
+      "subtitle": "Manage your social media accounts",
+      "connectAccount": "Connect Account",
+      "connectedOn": "Connected on {{date}}",
+      "disconnect": "Disconnect",
+      "emptyState": {
+        "title": "No accounts connected",
+        "description": "Connect your social media accounts to start posting"
+      }
+    },
+    "contentLibrary": {
+      "title": "Content Library",
+      "subtitle": "Organize your media and templates",
+      "tabs": {
+        "media": "Media",
+        "templates": "Templates"
+      },
+      "upload": "Upload Media",
+      "emptyState": {
+        "title": "No media files",
+        "description": "Upload images and videos to use in your posts"
+      }
+    },
+    "settings": {
+      "title": "Settings",
+      "subtitle": "Manage your preferences",
+      "sections": {
+        "general": "General",
+        "notifications": "Notifications",
+        "preferences": "Preferences",
+        "account": "Account"
+      },
+      "emptyState": {
+        "title": "Settings",
+        "description": "Configure your app preferences"
+      }
+    }
+  }
+}
