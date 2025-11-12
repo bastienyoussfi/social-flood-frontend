@@ -1,0 +1,44 @@
+{
+  "composer": {
+    "title": "Social Flood",
+    "subtitle": "Post to multiple platforms at once",
+    "platforms": {
+      "linkedin": "LinkedIn",
+      "twitter": "Twitter / X"
+    },
+    "editor": {
+      "placeholderLinkedIn": "What's on your mind? Share your thoughts on LinkedIn...",
+      "placeholderTwitter": "What's happening?",
+      "characterCount": "{{current}} / {{max}}",
+      "addImage": "Add Image",
+      "removeImage": "Remove Image"
+    },
+    "preview": {
+      "title": "Preview",
+      "emptyState": "Your post will appear here"
+    },
+    "publish": {
+      "button": "Post to All Platforms",
+      "posting": "Publishing...",
+      "selectPlatforms": "Select at least one platform",
+      "validationError": "Please fix validation errors before publishing",
+      "success": "Successfully published to all platforms!",
+      "partialSuccess": "Published to {{count}} of {{total}} platforms",
+      "error": "Failed to publish posts",
+      "linkedInSuccess": "Posted to LinkedIn",
+      "twitterSuccess": "Posted to Twitter",
+      "linkedInError": "Failed to post to LinkedIn",
+      "twitterError": "Failed to post to Twitter"
+    },
+    "panel": {
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "toggleTooltip": "Toggle {{platform}}"
+    },
+    "errors": {
+      "contentTooLong": "Content exceeds character limit",
+      "noPlatformsSelected": "Please enable at least one platform",
+      "publishFailed": "Failed to publish post"
+    }
+  }
+}

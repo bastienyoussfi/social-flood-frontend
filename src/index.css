@@ -21,6 +21,12 @@
   --color-input: hsl(0 0% 89.8%);
   --color-ring: hsl(0 0% 3.9%);
   --radius-default: 0.5rem;
+
+  /* Platform-specific colors */
+  --color-linkedin: oklch(0.45 0.15 250);
+  --color-linkedin-foreground: hsl(0 0% 98%);
+  --color-twitter: oklch(0.15 0 0);
+  --color-twitter-foreground: hsl(0 0% 98%);
 }
 
 .dark {

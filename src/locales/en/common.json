@@ -1,0 +1,35 @@
+{
+  "common": {
+    "actions": {
+      "save": "Save",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "edit": "Edit",
+      "close": "Close",
+      "clear": "Clear",
+      "clearAll": "Clear All",
+      "retry": "Retry",
+      "enable": "Enable",
+      "disable": "Disable"
+    },
+    "labels": {
+      "settings": "Settings",
+      "theme": "Theme",
+      "darkMode": "Dark Mode",
+      "lightMode": "Light Mode"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "loading": "Loading",
+      "success": "Success",
+      "error": "Error",
+      "pending": "Pending"
+    },
+    "validation": {
+      "required": "This field is required",
+      "maxChars": "Maximum {{count}} characters allowed",
+      "exceedsLimit": "Content exceeds {{count}} character limit"
+    }
+  }
+}
