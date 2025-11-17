@@ -1,0 +1,20 @@
+{
+  "hero": {
+    "headline": "Quelque chose d'incroyable arrive",
+    "tagline": "Soyez le premier à découvrir l'avenir",
+    "description": "Rejoignez notre liste d'accès anticipé exclusive et soyez informé lors du lancement.",
+    "form": {
+      "placeholder": "Entrez votre email",
+      "button": "Obtenir l'accès anticipé",
+      "success": "Merci ! Nous vous informerons bientôt.",
+      "error": "Veuillez entrer une adresse email valide"
+    }
+  },
+  "footer": {
+    "copyright": "© 2025 Social Flood. Tous droits réservés.",
+    "links": {
+      "terms": "Conditions d'utilisation",
+      "privacy": "Politique de confidentialité"
+    }
+  }
+}
