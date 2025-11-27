@@ -4,10 +4,15 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { PlatformCard } from '@/components/PlatformCard';
+import { TikTokCard } from '@/components/TikTokCard';
 import { type Platform, platformInfo, getStatus } from '@/lib/api';
 import { Zap, RefreshCw, User, Loader2, Server, CheckCircle2 } from 'lucide-react';
 
-const ALL_PLATFORMS: Platform[] = ['pinterest', 'instagram', 'twitter', 'linkedin', 'tiktok', 'youtube', 'facebook'];
+// Platforms that use the standard userId-based flow
+const USER_ID_PLATFORMS: Platform[] = ['pinterest', 'instagram', 'twitter', 'linkedin', 'youtube', 'facebook'];
+
+// Platforms with custom UI (like TikTok)
+const CUSTOM_PLATFORMS: Platform[] = ['tiktok'];
 
 function App() {
   const [userId, setUserId] = useState(() => localStorage.getItem('userId') || '');
@@ -23,14 +28,14 @@ function App() {
     setRefreshKey(prev => prev + 1);
   };
 
-  // Check connection status for all platforms
+  // Check connection status for userId-based platforms
   const checkAllStatuses = async () => {
     if (!savedUserId) return;
     
     setCheckingStatus(true);
     let count = 0;
 
-    const availablePlatforms = ALL_PLATFORMS.filter(p => platformInfo[p].available);
+    const availablePlatforms = USER_ID_PLATFORMS.filter(p => platformInfo[p].available);
     
     await Promise.all(
       availablePlatforms.map(async (platform) => {
@@ -57,8 +62,10 @@ function App() {
     setRefreshKey(prev => prev + 1);
   };
 
-  const availablePlatforms = ALL_PLATFORMS.filter(p => platformInfo[p].available);
-  const comingSoonPlatforms = ALL_PLATFORMS.filter(p => !platformInfo[p].available);
+  // Filter platforms by availability and type
+  const availableUserIdPlatforms = USER_ID_PLATFORMS.filter(p => platformInfo[p].available);
+  const comingSoonPlatforms = USER_ID_PLATFORMS.filter(p => !platformInfo[p].available);
+  const availableCustomPlatforms = CUSTOM_PLATFORMS.filter(p => platformInfo[p].available);
 
   return (
     <div className="min-h-screen p-6 md:p-8">
@@ -98,7 +105,8 @@ function App() {
               User Configuration
             </CardTitle>
             <CardDescription>
-              Enter your user ID to manage platform connections. This ID identifies you across all integrations.
+              Enter your user ID to manage platform connections. Some platforms (like Pinterest) require a user ID, 
+              while others (like TikTok) use global authentication.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -145,26 +153,41 @@ function App() {
           </CardContent>
         </Card>
 
-        {/* Platform Connections */}
+        {/* Global Authentication Platforms (TikTok) */}
+        {availableCustomPlatforms.length > 0 && (
+          <section className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold">Global Authentication</h2>
+              <Badge variant="outline">No user ID required</Badge>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <TikTokCard key={refreshKey} />
+            </div>
+          </section>
+        )}
+
+        {/* User ID Based Platforms */}
         {savedUserId ? (
           <>
             {/* Available Platforms */}
-            <section className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold">Available Integrations</h2>
-                <Badge variant="success">{availablePlatforms.length} available</Badge>
-              </div>
-              <div className="stagger-children grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {availablePlatforms.map((platform) => (
-                  <PlatformCard
-                    key={`${platform}-${refreshKey}`}
-                    platform={platform}
-                    userId={savedUserId}
-                    onStatusChange={checkAllStatuses}
-                  />
-                ))}
-              </div>
-            </section>
+            {availableUserIdPlatforms.length > 0 && (
+              <section className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xl font-semibold">User-Based Integrations</h2>
+                  <Badge variant="success">{availableUserIdPlatforms.length} available</Badge>
+                </div>
+                <div className="stagger-children grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {availableUserIdPlatforms.map((platform) => (
+                    <PlatformCard
+                      key={`${platform}-${refreshKey}`}
+                      platform={platform}
+                      userId={savedUserId}
+                      onStatusChange={checkAllStatuses}
+                    />
+                  ))}
+                </div>
+              </section>
+            )}
 
             {/* Coming Soon Platforms */}
             <section className="space-y-4">
@@ -191,8 +214,8 @@ function App() {
               </div>
               <h3 className="mb-2 text-lg font-semibold">No User ID Set</h3>
               <p className="text-muted-foreground max-w-md">
-                Enter your user ID above to view and manage your platform connections. 
-                This ID will be used for all OAuth flows.
+                Enter your user ID above to view and manage user-based platform connections (like Pinterest). 
+                TikTok uses global authentication and doesn't require a user ID.
               </p>
             </CardContent>
           </Card>
