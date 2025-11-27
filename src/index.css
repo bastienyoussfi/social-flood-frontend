@@ -1,46 +1,146 @@
 @import 'tailwindcss';
 
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap');
+
 @theme {
-  --color-background: hsl(0 0% 100%);
-  --color-foreground: hsl(0 0% 3.9%);
-  --color-card: hsl(0 0% 100%);
-  --color-card-foreground: hsl(0 0% 3.9%);
-  --color-popover: hsl(0 0% 100%);
-  --color-popover-foreground: hsl(0 0% 3.9%);
-  --color-primary: hsl(0 0% 9%);
-  --color-primary-foreground: hsl(0 0% 98%);
-  --color-secondary: hsl(0 0% 96.1%);
-  --color-secondary-foreground: hsl(0 0% 9%);
-  --color-muted: hsl(0 0% 96.1%);
-  --color-muted-foreground: hsl(0 0% 45.1%);
-  --color-accent: hsl(0 0% 96.1%);
-  --color-accent-foreground: hsl(0 0% 9%);
-  --color-destructive: hsl(0 84.2% 60.2%);
+  --font-sans: 'Outfit', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  
+  --color-background: hsl(225 25% 6%);
+  --color-foreground: hsl(210 40% 98%);
+  --color-card: hsl(225 20% 9%);
+  --color-card-foreground: hsl(210 40% 98%);
+  --color-popover: hsl(225 20% 9%);
+  --color-popover-foreground: hsl(210 40% 98%);
+  --color-primary: hsl(262 83% 65%);
+  --color-primary-foreground: hsl(0 0% 100%);
+  --color-secondary: hsl(225 20% 14%);
+  --color-secondary-foreground: hsl(210 40% 98%);
+  --color-muted: hsl(225 20% 14%);
+  --color-muted-foreground: hsl(215 20% 55%);
+  --color-accent: hsl(225 20% 18%);
+  --color-accent-foreground: hsl(210 40% 98%);
+  --color-destructive: hsl(0 72% 51%);
   --color-destructive-foreground: hsl(0 0% 98%);
-  --color-border: hsl(0 0% 89.8%);
-  --color-input: hsl(0 0% 89.8%);
-  --color-ring: hsl(0 0% 3.9%);
-  --radius-default: 0.5rem;
+  --color-success: hsl(142 71% 45%);
+  --color-success-foreground: hsl(0 0% 100%);
+  --color-warning: hsl(38 92% 50%);
+  --color-warning-foreground: hsl(0 0% 0%);
+  --color-border: hsl(225 20% 16%);
+  --color-input: hsl(225 20% 16%);
+  --color-ring: hsl(262 83% 65%);
+  --radius-default: 0.75rem;
 }
 
-.dark {
-  --color-background: hsl(0 0% 3.9%);
-  --color-foreground: hsl(0 0% 98%);
-  --color-card: hsl(0 0% 3.9%);
-  --color-card-foreground: hsl(0 0% 98%);
-  --color-popover: hsl(0 0% 3.9%);
-  --color-popover-foreground: hsl(0 0% 98%);
-  --color-primary: hsl(0 0% 98%);
-  --color-primary-foreground: hsl(0 0% 9%);
-  --color-secondary: hsl(0 0% 14.9%);
-  --color-secondary-foreground: hsl(0 0% 98%);
-  --color-muted: hsl(0 0% 14.9%);
-  --color-muted-foreground: hsl(0 0% 63.9%);
-  --color-accent: hsl(0 0% 14.9%);
-  --color-accent-foreground: hsl(0 0% 98%);
-  --color-destructive: hsl(0 62.8% 30.6%);
-  --color-destructive-foreground: hsl(0 0% 98%);
-  --color-border: hsl(0 0% 14.9%);
-  --color-input: hsl(0 0% 14.9%);
-  --color-ring: hsl(0 0% 83.1%);
+body {
+  font-family: var(--font-sans);
+  background: var(--color-background);
+  background-image: 
+    radial-gradient(ellipse 80% 50% at 50% -20%, hsla(262, 83%, 65%, 0.15), transparent),
+    radial-gradient(ellipse 60% 40% at 100% 100%, hsla(200, 100%, 50%, 0.08), transparent);
+  min-height: 100vh;
 }
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-secondary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-muted-foreground);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary);
+}
+
+/* Platform brand colors */
+.platform-pinterest {
+  --platform-color: hsl(0 78% 51%);
+  --platform-bg: hsla(0, 78%, 51%, 0.1);
+}
+
+.platform-instagram {
+  --platform-color: hsl(326 78% 55%);
+  --platform-bg: hsla(326, 78%, 55%, 0.1);
+}
+
+.platform-twitter {
+  --platform-color: hsl(203 89% 53%);
+  --platform-bg: hsla(203, 89%, 53%, 0.1);
+}
+
+.platform-linkedin {
+  --platform-color: hsl(201 100% 35%);
+  --platform-bg: hsla(201, 100%, 35%, 0.1);
+}
+
+.platform-tiktok {
+  --platform-color: hsl(340 82% 52%);
+  --platform-bg: hsla(340, 82%, 52%, 0.1);
+}
+
+.platform-youtube {
+  --platform-color: hsl(0 100% 50%);
+  --platform-bg: hsla(0, 100%, 50%, 0.1);
+}
+
+.platform-facebook {
+  --platform-color: hsl(220 46% 48%);
+  --platform-bg: hsla(220, 46%, 48%, 0.1);
+}
+
+/* Animations */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 var(--platform-color);
+  }
+  50% {
+    box-shadow: 0 0 20px 4px var(--platform-color);
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out forwards;
+}
+
+/* Stagger children animations */
+.stagger-children > * {
+  opacity: 0;
+  animation: slide-up 0.4s ease-out forwards;
+}
+
+.stagger-children > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger-children > *:nth-child(2) { animation-delay: 0.1s; }
+.stagger-children > *:nth-child(3) { animation-delay: 0.15s; }
+.stagger-children > *:nth-child(4) { animation-delay: 0.2s; }
+.stagger-children > *:nth-child(5) { animation-delay: 0.25s; }
+.stagger-children > *:nth-child(6) { animation-delay: 0.3s; }
+.stagger-children > *:nth-child(7) { animation-delay: 0.35s; }
