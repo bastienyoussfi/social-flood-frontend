@@ -113,8 +113,8 @@ export const platformInfo: Record<Platform, {
   },
   instagram: { 
     name: 'Instagram', 
-    available: false, 
-    description: 'Coming soon'
+    available: true, 
+    description: 'Share photos and reels'
   },
   youtube: { 
     name: 'YouTube', 

@@ -9,7 +9,7 @@ interface PlatformIconProps {
 
 // Simple SVG icons for each platform
 export function PlatformIcon({ platform, className, style }: PlatformIconProps) {
-  const icons: Record<Platform, JSX.Element> = {
+  const icons: Record<Platform, React.ReactNode> = {
     pinterest: (
       <svg viewBox="0 0 24 24" fill="currentColor" className={className} style={style}>
         <path d="M12 0a12 12 0 0 0-4.37 23.17c-.1-.94-.2-2.4.04-3.44l1.4-5.93s-.35-.7-.35-1.76c0-1.65.96-2.89 2.15-2.89 1.02 0 1.51.76 1.51 1.68 0 1.02-.65 2.55-.99 3.97-.28 1.19.6 2.16 1.77 2.16 2.12 0 3.76-2.24 3.76-5.47 0-2.86-2.06-4.87-4.99-4.87-3.4 0-5.4 2.55-5.4 5.18 0 1.03.4 2.13.89 2.73.1.12.11.22.08.34l-.34 1.36c-.05.22-.17.26-.4.16-1.5-.7-2.43-2.88-2.43-4.64 0-3.78 2.75-7.26 7.93-7.26 4.16 0 7.4 2.97 7.4 6.93 0 4.14-2.61 7.46-6.23 7.46-1.22 0-2.36-.63-2.75-1.38l-.75 2.85c-.27 1.04-1 2.35-1.49 3.15A12 12 0 1 0 12 0z"/>
