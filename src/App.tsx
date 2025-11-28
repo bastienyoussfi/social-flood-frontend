@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -203,6 +204,21 @@ function App() {
             OAuth Integration Tester • Backend running on{' '}
             <code className="bg-muted rounded px-1.5 py-0.5 font-mono">localhost:3000</code>
           </p>
+          <div className="mt-3 flex items-center justify-center gap-4">
+            <Link 
+              to="/terms" 
+              className="text-muted-foreground hover:text-primary transition-colors"
+            >
+              Terms of Service
+            </Link>
+            <span className="text-border">•</span>
+            <Link 
+              to="/privacy" 
+              className="text-muted-foreground hover:text-primary transition-colors"
+            >
+              Privacy Policy
+            </Link>
+          </div>
         </footer>
       </div>
     </div>
