@@ -15,7 +15,7 @@ import {
   XCircle, 
   Loader2, 
   ExternalLink, 
-  Unplug,
+  Trash2,
   RefreshCw,
   Clock,
   User,
@@ -116,6 +116,9 @@ export function PlatformCard({ platform, userId, onStatusChange }: PlatformCardP
               {!isAvailable && (
                 <span className="text-muted-foreground text-xs">Coming soon</span>
               )}
+              {isAvailable && info.description && (
+                <span className="text-muted-foreground text-xs">{info.description}</span>
+              )}
             </div>
           </div>
           
@@ -162,6 +165,14 @@ export function PlatformCard({ platform, userId, onStatusChange }: PlatformCardP
                     <User className="text-muted-foreground h-4 w-4" />
                     <span className="text-muted-foreground">Account:</span>
                     <span className="font-medium">{status.platformUsername}</span>
+                  </div>
+                )}
+                {status.platformUserId && (
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="text-muted-foreground ml-6">ID:</span>
+                    <code className="bg-secondary rounded px-1.5 py-0.5 font-mono text-xs">
+                      {status.platformUserId}
+                    </code>
                   </div>
                 )}
                 {status.scopes && status.scopes.length > 0 && (
@@ -214,7 +225,7 @@ export function PlatformCard({ platform, userId, onStatusChange }: PlatformCardP
                     {disconnecting ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
-                      <Unplug className="h-4 w-4" />
+                      <Trash2 className="h-4 w-4" />
                     )}
                     Disconnect
                   </Button>
@@ -241,4 +252,3 @@ export function PlatformCard({ platform, userId, onStatusChange }: PlatformCardP
     </Card>
   );
 }
-

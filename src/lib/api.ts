@@ -3,6 +3,18 @@ const API_BASE_URL = 'http://localhost:3000';
 
 export type Platform = 'pinterest' | 'instagram' | 'twitter' | 'linkedin' | 'tiktok' | 'youtube' | 'facebook';
 
+export interface OAuthToken {
+  userId: string;
+  platform: Platform;
+  platformUserId: string;
+  platformUsername?: string;
+  scopes: string[];
+  expiresAt: string;
+  refreshExpiresAt?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface PlatformStatus {
   connected: boolean;
   userId: string;
@@ -13,18 +25,9 @@ export interface PlatformStatus {
   platformUsername?: string;
 }
 
-export interface TikTokUser {
-  tiktokUserId: string;
-  tiktokUsername: string | null;
-  scopes: string[];
-  expiresAt: string;
-  createdAt: string;
-  isExpired: boolean;
-}
-
-export interface TikTokUsersResponse {
+export interface PlatformUsersResponse {
   count: number;
-  users: TikTokUser[];
+  users: OAuthToken[];
 }
 
 export interface ApiError {
@@ -32,39 +35,22 @@ export interface ApiError {
   message: string;
 }
 
-// Platform-specific endpoint configurations
-const platformEndpoints: Record<Platform, { 
-  base: string; 
-  hasUserId: boolean;
-  hasDisconnect: boolean;
-}> = {
-  pinterest: { base: '/auth/pinterest', hasUserId: true, hasDisconnect: true },
-  tiktok: { base: '/api/auth/tiktok', hasUserId: false, hasDisconnect: false },
-  instagram: { base: '/auth/instagram', hasUserId: true, hasDisconnect: true },
-  twitter: { base: '/auth/twitter', hasUserId: true, hasDisconnect: true },
-  linkedin: { base: '/auth/linkedin', hasUserId: true, hasDisconnect: true },
-  youtube: { base: '/auth/youtube', hasUserId: true, hasDisconnect: true },
-  facebook: { base: '/auth/facebook', hasUserId: true, hasDisconnect: true },
-};
+// Unified API endpoints - all platforms now follow the same pattern
+// GET  /api/auth/{platform}/login?userId=xxx - Start OAuth
+// GET  /api/auth/{platform}/callback - Handle callback  
+// GET  /api/auth/{platform}/status?userId=xxx - Check status
+// DELETE /api/auth/{platform}/:userId - Disconnect
+// GET  /api/auth/{platform}/users - List all (admin)
 
-// Get platform OAuth login URL (redirects to platform)
-export function getLoginUrl(platform: Platform, userId?: string): string {
-  const config = platformEndpoints[platform];
-  
-  if (platform === 'tiktok') {
-    // TikTok doesn't use userId in login
-    return `${API_BASE_URL}${config.base}`;
-  }
-  
-  return `${API_BASE_URL}${config.base}/login?userId=${encodeURIComponent(userId || '')}`;
+// Get platform OAuth login URL
+export function getLoginUrl(platform: Platform, userId: string): string {
+  return `${API_BASE_URL}/api/auth/${platform}/login?userId=${encodeURIComponent(userId)}`;
 }
 
 // Check connection status for a platform
 export async function getStatus(platform: Platform, userId: string): Promise<PlatformStatus> {
-  const config = platformEndpoints[platform];
-  
   const response = await fetch(
-    `${API_BASE_URL}${config.base}/status?userId=${encodeURIComponent(userId)}`
+    `${API_BASE_URL}/api/auth/${platform}/status?userId=${encodeURIComponent(userId)}`
   );
   
   if (!response.ok) {
@@ -75,47 +61,22 @@ export async function getStatus(platform: Platform, userId: string): Promise<Pla
   return response.json();
 }
 
-// Get all TikTok authenticated users
-export async function getTikTokUsers(): Promise<TikTokUsersResponse> {
-  const response = await fetch(`${API_BASE_URL}/api/auth/tiktok/users`);
+// Get all authenticated users for a platform (admin)
+export async function getPlatformUsers(platform: Platform): Promise<PlatformUsersResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/auth/${platform}/users`);
   
   if (!response.ok) {
-    throw new Error('Failed to fetch TikTok users');
+    throw new Error(`Failed to fetch ${platform} users`);
   }
   
   return response.json();
 }
 
-// Check TikTok user token status
-export async function checkTikTokUser(tiktokUserId: string): Promise<{
-  authenticated: boolean;
-  tiktokUsername?: string;
-  expiresAt?: string;
-  isExpired?: boolean;
-  needsRefresh?: boolean;
-  message?: string;
-}> {
-  const response = await fetch(
-    `${API_BASE_URL}/api/auth/tiktok/check/${encodeURIComponent(tiktokUserId)}`
-  );
-  
-  if (!response.ok) {
-    throw new Error('Failed to check TikTok user');
-  }
-  
-  return response.json();
-}
-
-// Disconnect a platform
+// Disconnect a platform (revoke token)
 export async function disconnect(platform: Platform, userId: string): Promise<void> {
-  const config = platformEndpoints[platform];
-  
-  if (!config.hasDisconnect) {
-    throw new Error(`${platform} does not support disconnect`);
-  }
-  
   const response = await fetch(
-    `${API_BASE_URL}${config.base}/disconnect?userId=${encodeURIComponent(userId)}`
+    `${API_BASE_URL}/api/auth/${platform}/${encodeURIComponent(userId)}`,
+    { method: 'DELETE' }
   );
   
   if (!response.ok) {
@@ -127,28 +88,52 @@ export async function disconnect(platform: Platform, userId: string): Promise<vo
 // Platform display information
 export const platformInfo: Record<Platform, { 
   name: string; 
-  icon: string; 
   available: boolean;
-  hasUserId: boolean;
   description?: string;
 }> = {
   pinterest: { 
     name: 'Pinterest', 
-    icon: 'pinterest', 
     available: true, 
-    hasUserId: true,
-    description: 'Connect with your user ID'
+    description: 'Share pins and boards'
   },
   tiktok: { 
     name: 'TikTok', 
-    icon: 'tiktok', 
     available: true, 
-    hasUserId: false,
-    description: 'Global authentication - no user ID needed'
+    description: 'Share short-form videos'
   },
-  instagram: { name: 'Instagram', icon: 'instagram', available: false, hasUserId: true },
-  twitter: { name: 'X (Twitter)', icon: 'twitter', available: false, hasUserId: true },
-  linkedin: { name: 'LinkedIn', icon: 'linkedin', available: false, hasUserId: true },
-  youtube: { name: 'YouTube', icon: 'youtube', available: false, hasUserId: true },
-  facebook: { name: 'Facebook', icon: 'facebook', available: false, hasUserId: true },
+  twitter: { 
+    name: 'X (Twitter)', 
+    available: true, 
+    description: 'Share tweets and threads'
+  },
+  linkedin: { 
+    name: 'LinkedIn', 
+    available: true, 
+    description: 'Share professional content'
+  },
+  instagram: { 
+    name: 'Instagram', 
+    available: false, 
+    description: 'Coming soon'
+  },
+  youtube: { 
+    name: 'YouTube', 
+    available: true, 
+    description: 'Upload videos to your channel'
+  },
+  facebook: { 
+    name: 'Facebook', 
+    available: false, 
+    description: 'Coming soon'
+  },
 };
+
+// Get all available platforms
+export const availablePlatforms = Object.entries(platformInfo)
+  .filter(([, info]) => info.available)
+  .map(([platform]) => platform as Platform);
+
+// Get coming soon platforms
+export const comingSoonPlatforms = Object.entries(platformInfo)
+  .filter(([, info]) => !info.available)
+  .map(([platform]) => platform as Platform);
