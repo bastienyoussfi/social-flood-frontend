@@ -3,31 +3,24 @@ const API_BASE_URL = 'http://localhost:3000';
 
 export type Platform = 'pinterest' | 'instagram' | 'twitter' | 'linkedin' | 'tiktok' | 'youtube' | 'facebook';
 
-export interface OAuthToken {
+// Social connection from the new connections API
+export interface SocialConnection {
+  id: string;
   userId: string;
   platform: Platform;
+  displayName: string;
   platformUserId: string;
   platformUsername?: string;
   scopes: string[];
   expiresAt: string;
   refreshExpiresAt?: string;
+  isActive: boolean;
   createdAt: string;
   updatedAt: string;
 }
 
-export interface PlatformStatus {
-  connected: boolean;
-  userId: string;
-  platform: Platform;
-  scopes?: string[];
-  expiresAt?: string;
-  platformUserId?: string;
-  platformUsername?: string;
-}
-
-export interface PlatformUsersResponse {
-  count: number;
-  users: OAuthToken[];
+export interface ConnectionsResponse {
+  connections: SocialConnection[];
 }
 
 export interface ApiError {
@@ -35,54 +28,88 @@ export interface ApiError {
   message: string;
 }
 
-// Unified API endpoints - all platforms now follow the same pattern
-// GET  /api/auth/{platform}/login?userId=xxx - Start OAuth
-// GET  /api/auth/{platform}/callback - Handle callback  
-// GET  /api/auth/{platform}/status?userId=xxx - Check status
-// DELETE /api/auth/{platform}/:userId - Disconnect
-// GET  /api/auth/{platform}/users - List all (admin)
+// Helper to get auth headers (cookies are sent automatically with credentials: 'include')
+const fetchWithAuth = async (url: string, options: RequestInit = {}) => {
+  return fetch(url, {
+    ...options,
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+};
 
-// Get platform OAuth login URL
-export function getLoginUrl(platform: Platform, userId: string): string {
-  return `${API_BASE_URL}/api/auth/${platform}/login?userId=${encodeURIComponent(userId)}`;
-}
-
-// Check connection status for a platform
-export async function getStatus(platform: Platform, userId: string): Promise<PlatformStatus> {
-  const response = await fetch(
-    `${API_BASE_URL}/api/auth/${platform}/status?userId=${encodeURIComponent(userId)}`
-  );
+// Get all connections for the authenticated user
+export async function getConnections(): Promise<SocialConnection[]> {
+  const response = await fetchWithAuth(`${API_BASE_URL}/api/connections`);
   
   if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error('Not authenticated');
+    }
     const error: ApiError = await response.json();
-    throw new Error(error.message || 'Failed to get status');
+    throw new Error(error.message || 'Failed to get connections');
   }
   
-  return response.json();
+  const data: ConnectionsResponse = await response.json();
+  return data.connections;
 }
 
-// Get all authenticated users for a platform (admin)
-export async function getPlatformUsers(platform: Platform): Promise<PlatformUsersResponse> {
-  const response = await fetch(`${API_BASE_URL}/api/auth/${platform}/users`);
-  
-  if (!response.ok) {
-    throw new Error(`Failed to fetch ${platform} users`);
-  }
-  
-  return response.json();
+// Get connection URL for a platform (redirects to OAuth flow)
+export function getConnectUrl(platform: Platform): string {
+  return `${API_BASE_URL}/api/connections/${platform}/connect`;
 }
 
-// Disconnect a platform (revoke token)
-export async function disconnect(platform: Platform, userId: string): Promise<void> {
-  const response = await fetch(
-    `${API_BASE_URL}/api/auth/${platform}/${encodeURIComponent(userId)}`,
+// Disconnect a platform by connection ID
+export async function disconnectPlatform(connectionId: string): Promise<void> {
+  const response = await fetchWithAuth(
+    `${API_BASE_URL}/api/connections/${connectionId}`,
     { method: 'DELETE' }
   );
   
   if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error('Not authenticated');
+    }
     const error: ApiError = await response.json();
     throw new Error(error.message || 'Failed to disconnect');
   }
+}
+
+// Refresh a connection's token
+export async function refreshConnection(connectionId: string): Promise<SocialConnection> {
+  const response = await fetchWithAuth(
+    `${API_BASE_URL}/api/connections/${connectionId}/refresh`,
+    { method: 'POST' }
+  );
+  
+  if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error('Not authenticated');
+    }
+    const error: ApiError = await response.json();
+    throw new Error(error.message || 'Failed to refresh connection');
+  }
+  
+  return response.json();
+}
+
+// Get connection details
+export async function getConnectionDetails(connectionId: string): Promise<SocialConnection> {
+  const response = await fetchWithAuth(
+    `${API_BASE_URL}/api/connections/details/${connectionId}`
+  );
+  
+  if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error('Not authenticated');
+    }
+    const error: ApiError = await response.json();
+    throw new Error(error.message || 'Failed to get connection details');
+  }
+  
+  return response.json();
 }
 
 // Platform display information

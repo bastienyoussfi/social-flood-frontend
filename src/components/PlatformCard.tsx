@@ -1,14 +1,14 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { PlatformIcon } from '@/components/PlatformIcon';
 import { 
   type Platform, 
-  type PlatformStatus, 
+  type SocialConnection,
   platformInfo, 
-  getLoginUrl, 
-  getStatus, 
-  disconnect 
+  getConnectUrl, 
+  disconnectPlatform,
+  refreshConnection,
 } from '@/lib/api';
 import { 
   CheckCircle, 
@@ -24,46 +24,27 @@ import {
 
 interface PlatformCardProps {
   platform: Platform;
-  userId: string;
+  connection?: SocialConnection;
   onStatusChange?: () => void;
 }
 
-export function PlatformCard({ platform, userId, onStatusChange }: PlatformCardProps) {
-  const [status, setStatus] = useState<PlatformStatus | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+export function PlatformCard({ platform, connection, onStatusChange }: PlatformCardProps) {
   const [disconnecting, setDisconnecting] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const info = platformInfo[platform];
   const isAvailable = info.available;
-
-  const fetchStatus = useCallback(async () => {
-    if (!userId || !isAvailable) return;
-    
-    setLoading(true);
-    setError(null);
-    
-    try {
-      const data = await getStatus(platform, userId);
-      setStatus(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch status');
-      setStatus(null);
-    } finally {
-      setLoading(false);
-    }
-  }, [platform, userId, isAvailable]);
-
-  useEffect(() => {
-    fetchStatus();
-  }, [fetchStatus]);
+  const isConnected = connection?.isActive ?? false;
 
   const handleConnect = () => {
-    const url = getLoginUrl(platform, userId);
+    const url = getConnectUrl(platform);
     window.open(url, '_blank', 'width=600,height=700');
   };
 
   const handleDisconnect = async () => {
+    if (!connection) return;
+    
     if (!confirm(`Are you sure you want to disconnect ${info.name}?`)) {
       return;
     }
@@ -72,13 +53,28 @@ export function PlatformCard({ platform, userId, onStatusChange }: PlatformCardP
     setError(null);
 
     try {
-      await disconnect(platform, userId);
-      setStatus(prev => prev ? { ...prev, connected: false } : null);
+      await disconnectPlatform(connection.id);
       onStatusChange?.();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to disconnect');
     } finally {
       setDisconnecting(false);
+    }
+  };
+
+  const handleRefresh = async () => {
+    if (!connection) return;
+
+    setRefreshing(true);
+    setError(null);
+
+    try {
+      await refreshConnection(connection.id);
+      onStatusChange?.();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to refresh');
+    } finally {
+      setRefreshing(false);
     }
   };
 
@@ -125,9 +121,7 @@ export function PlatformCard({ platform, userId, onStatusChange }: PlatformCardP
           {/* Status indicator */}
           {isAvailable && (
             <div className="flex items-center gap-2">
-              {loading ? (
-                <Loader2 className="text-muted-foreground h-5 w-5 animate-spin" />
-              ) : status?.connected ? (
+              {isConnected ? (
                 <div className="flex items-center gap-1.5 text-success">
                   <CheckCircle className="h-5 w-5" />
                   <span className="text-sm font-medium">Connected</span>
@@ -158,29 +152,35 @@ export function PlatformCard({ platform, userId, onStatusChange }: PlatformCardP
             )}
 
             {/* Connection details */}
-            {status?.connected && (
+            {isConnected && connection && (
               <div className="bg-muted/30 space-y-2 rounded-lg p-3">
-                {status.platformUsername && (
+                {connection.platformUsername && (
                   <div className="flex items-center gap-2 text-sm">
                     <User className="text-muted-foreground h-4 w-4" />
                     <span className="text-muted-foreground">Account:</span>
-                    <span className="font-medium">{status.platformUsername}</span>
+                    <span className="font-medium">{connection.platformUsername}</span>
                   </div>
                 )}
-                {status.platformUserId && (
+                {connection.displayName && connection.displayName !== connection.platformUsername && (
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="text-muted-foreground ml-6">Display:</span>
+                    <span className="font-medium">{connection.displayName}</span>
+                  </div>
+                )}
+                {connection.platformUserId && (
                   <div className="flex items-center gap-2 text-sm">
                     <span className="text-muted-foreground ml-6">ID:</span>
                     <code className="bg-secondary rounded px-1.5 py-0.5 font-mono text-xs">
-                      {status.platformUserId}
+                      {connection.platformUserId}
                     </code>
                   </div>
                 )}
-                {status.scopes && status.scopes.length > 0 && (
+                {connection.scopes && connection.scopes.length > 0 && (
                   <div className="flex items-start gap-2 text-sm">
                     <Shield className="text-muted-foreground mt-0.5 h-4 w-4" />
                     <span className="text-muted-foreground">Scopes:</span>
                     <div className="flex flex-wrap gap-1">
-                      {status.scopes.map(scope => (
+                      {connection.scopes.map(scope => (
                         <span 
                           key={scope} 
                           className="bg-secondary rounded px-1.5 py-0.5 font-mono text-xs"
@@ -191,11 +191,11 @@ export function PlatformCard({ platform, userId, onStatusChange }: PlatformCardP
                     </div>
                   </div>
                 )}
-                {status.expiresAt && (
+                {connection.expiresAt && (
                   <div className="flex items-center gap-2 text-sm">
                     <Clock className="text-muted-foreground h-4 w-4" />
                     <span className="text-muted-foreground">Expires:</span>
-                    <span>{formatDate(status.expiresAt)}</span>
+                    <span>{formatDate(connection.expiresAt)}</span>
                   </div>
                 )}
               </div>
@@ -203,23 +203,23 @@ export function PlatformCard({ platform, userId, onStatusChange }: PlatformCardP
 
             {/* Action buttons */}
             <div className="flex gap-2">
-              {status?.connected ? (
+              {isConnected && connection ? (
                 <>
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={fetchStatus}
-                    disabled={loading}
+                    onClick={handleRefresh}
+                    disabled={refreshing || disconnecting}
                     className="flex-1"
                   >
-                    <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+                    <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
                     Refresh
                   </Button>
                   <Button
                     variant="destructive"
                     size="sm"
                     onClick={handleDisconnect}
-                    disabled={disconnecting}
+                    disabled={disconnecting || refreshing}
                     className="flex-1"
                   >
                     {disconnecting ? (
@@ -234,7 +234,6 @@ export function PlatformCard({ platform, userId, onStatusChange }: PlatformCardP
                 <Button
                   size="sm"
                   onClick={handleConnect}
-                  disabled={loading || !userId}
                   className="w-full"
                   style={{ 
                     background: 'var(--platform-color)',

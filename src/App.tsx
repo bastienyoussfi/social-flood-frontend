@@ -1,62 +1,71 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { PlatformCard } from '@/components/PlatformCard';
+import { useAuth } from '@/contexts/AuthContext';
 import { 
   availablePlatforms, 
-  comingSoonPlatforms, 
-  getStatus 
+  comingSoonPlatforms,
+  getConnections,
+  type SocialConnection,
 } from '@/lib/api';
-import { Zap, RefreshCw, User, Loader2, Server, CheckCircle2 } from 'lucide-react';
+import { Zap, RefreshCw, Loader2, Server, CheckCircle2, LogOut, User } from 'lucide-react';
 
 function App() {
-  const [userId, setUserId] = useState(() => localStorage.getItem('userId') || '');
-  const [savedUserId, setSavedUserId] = useState(() => localStorage.getItem('userId') || '');
-  const [connectedCount, setConnectedCount] = useState(0);
+  const { user, signOut, isLoading: authLoading } = useAuth();
+  const [connections, setConnections] = useState<SocialConnection[]>([]);
   const [checkingStatus, setCheckingStatus] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [error, setError] = useState<string | null>(null);
 
-  // Save userId to localStorage
-  const handleSaveUserId = () => {
-    localStorage.setItem('userId', userId);
-    setSavedUserId(userId);
-    setRefreshKey(prev => prev + 1);
-  };
-
-  // Check connection status for all available platforms
-  const checkAllStatuses = async () => {
-    if (!savedUserId) return;
-    
+  // Fetch all connections for the user
+  const fetchConnections = useCallback(async () => {
     setCheckingStatus(true);
-    let count = 0;
+    setError(null);
     
-    await Promise.all(
-      availablePlatforms.map(async (platform) => {
-        try {
-          const status = await getStatus(platform, savedUserId);
-          if (status.connected) count++;
-        } catch {
-          // Ignore errors
-        }
-      })
-    );
-
-    setConnectedCount(count);
-    setCheckingStatus(false);
-  };
+    try {
+      const data = await getConnections();
+      setConnections(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch connections');
+      setConnections([]);
+    } finally {
+      setCheckingStatus(false);
+    }
+  }, []);
 
   useEffect(() => {
-    if (savedUserId) {
-      checkAllStatuses();
-    }
-  }, [savedUserId, refreshKey]);
+    fetchConnections();
+  }, [fetchConnections, refreshKey]);
 
   const handleRefreshAll = () => {
     setRefreshKey(prev => prev + 1);
   };
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+    } catch (err) {
+      console.error('Failed to sign out:', err);
+    }
+  };
+
+  // Get connection for a specific platform
+  const getConnectionForPlatform = (platform: string): SocialConnection | undefined => {
+    return connections.find(c => c.platform === platform);
+  };
+
+  const connectedCount = connections.filter(c => c.isActive).length;
+
+  if (authLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen p-6 md:p-8">
@@ -79,123 +88,102 @@ function App() {
               <Server className="h-3 w-3" />
               API: localhost:3000
             </Badge>
-            {savedUserId && (
-              <Badge variant="secondary" className="gap-1.5">
-                <CheckCircle2 className="h-3 w-3" />
-                {connectedCount}/{availablePlatforms.length} connected
-              </Badge>
-            )}
+            <Badge variant="secondary" className="gap-1.5">
+              <CheckCircle2 className="h-3 w-3" />
+              {connectedCount}/{availablePlatforms.length} connected
+            </Badge>
           </div>
         </header>
 
-        {/* User ID Configuration */}
+        {/* User Info Card */}
         <Card className="border-primary/20 bg-gradient-to-br from-card to-card/50">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <User className="h-5 w-5 text-primary" />
-              User Configuration
-            </CardTitle>
-            <CardDescription>
-              Enter your user ID to manage platform connections. This ID identifies you across all OAuth integrations.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-col gap-4 sm:flex-row">
-              <div className="flex-1">
-                <Input
-                  placeholder="Enter your user ID (e.g., user@example.com)"
-                  value={userId}
-                  onChange={(e) => setUserId(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSaveUserId()}
-                  className="h-11"
+          <CardContent className="flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-4">
+              {user?.image ? (
+                <img
+                  src={user.image}
+                  alt={user.name}
+                  className="h-12 w-12 rounded-full border-2 border-primary/20"
                 />
-              </div>
-              <div className="flex gap-2">
-                <Button 
-                  onClick={handleSaveUserId} 
-                  disabled={!userId || userId === savedUserId}
-                  className="h-11"
-                >
-                  Save User ID
-                </Button>
-                {savedUserId && (
-                  <Button
-                    variant="outline"
-                    onClick={handleRefreshAll}
-                    disabled={checkingStatus}
-                    className="h-11"
-                  >
-                    {checkingStatus ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <RefreshCw className="h-4 w-4" />
-                    )}
-                    Refresh All
-                  </Button>
-                )}
+              ) : (
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                  <User className="h-6 w-6 text-primary" />
+                </div>
+              )}
+              <div>
+                <h2 className="font-semibold">{user?.name}</h2>
+                <p className="text-sm text-muted-foreground">{user?.email}</p>
               </div>
             </div>
-            {savedUserId && (
-              <p className="text-muted-foreground mt-3 text-sm">
-                Active user: <code className="bg-muted rounded px-2 py-0.5 font-mono">{savedUserId}</code>
-              </p>
-            )}
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={handleRefreshAll}
+                disabled={checkingStatus}
+                className="h-10"
+              >
+                {checkingStatus ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <RefreshCw className="h-4 w-4" />
+                )}
+                Refresh All
+              </Button>
+              <Button
+                variant="outline"
+                onClick={handleSignOut}
+                className="h-10"
+              >
+                <LogOut className="h-4 w-4" />
+                Sign Out
+              </Button>
+            </div>
           </CardContent>
         </Card>
 
-        {/* Platform Connections */}
-        {savedUserId ? (
-          <>
-            {/* Available Platforms */}
-            <section className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold">Connected Platforms</h2>
-                <Badge variant="success">{availablePlatforms.length} available</Badge>
-              </div>
-              <div className="stagger-children grid gap-4 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
-                {availablePlatforms.map((platform) => (
-                  <PlatformCard
-                    key={`${platform}-${refreshKey}`}
-                    platform={platform}
-                    userId={savedUserId}
-                    onStatusChange={checkAllStatuses}
-                  />
-                ))}
-              </div>
-            </section>
-
-            {/* Coming Soon Platforms */}
-            {comingSoonPlatforms.length > 0 && (
-              <section className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-muted-foreground text-xl font-semibold">Coming Soon</h2>
-                  <Badge variant="outline">{comingSoonPlatforms.length} platforms</Badge>
-                </div>
-                <div className="stagger-children grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {comingSoonPlatforms.map((platform) => (
-                    <PlatformCard
-                      key={platform}
-                      platform={platform}
-                      userId={savedUserId}
-                    />
-                  ))}
-                </div>
-              </section>
-            )}
-          </>
-        ) : (
-          <Card className="border-dashed">
-            <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-              <div className="bg-muted mb-4 rounded-full p-4">
-                <User className="text-muted-foreground h-8 w-8" />
-              </div>
-              <h3 className="mb-2 text-lg font-semibold">No User ID Set</h3>
-              <p className="text-muted-foreground max-w-md">
-                Enter your user ID above to view and manage your platform connections. 
-                All OAuth flows require a user ID for multi-tenancy support.
-              </p>
+        {/* Error Message */}
+        {error && (
+          <Card className="border-destructive/20 bg-destructive/10">
+            <CardContent className="p-4 text-center text-destructive">
+              {error}
             </CardContent>
           </Card>
+        )}
+
+        {/* Available Platforms */}
+        <section className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold">Connected Platforms</h2>
+            <Badge variant="success">{availablePlatforms.length} available</Badge>
+          </div>
+          <div className="stagger-children grid gap-4 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
+            {availablePlatforms.map((platform) => (
+              <PlatformCard
+                key={`${platform}-${refreshKey}`}
+                platform={platform}
+                connection={getConnectionForPlatform(platform)}
+                onStatusChange={fetchConnections}
+              />
+            ))}
+          </div>
+        </section>
+
+        {/* Coming Soon Platforms */}
+        {comingSoonPlatforms.length > 0 && (
+          <section className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-muted-foreground text-xl font-semibold">Coming Soon</h2>
+              <Badge variant="outline">{comingSoonPlatforms.length} platforms</Badge>
+            </div>
+            <div className="stagger-children grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {comingSoonPlatforms.map((platform) => (
+                <PlatformCard
+                  key={platform}
+                  platform={platform}
+                />
+              ))}
+            </div>
+          </section>
         )}
 
         {/* Footer */}
