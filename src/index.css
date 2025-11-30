@@ -97,6 +97,11 @@ body {
   --platform-bg: hsla(220, 46%, 48%, 0.1);
 }
 
+.platform-bluesky {
+  --platform-color: hsl(211 99% 53%);
+  --platform-bg: hsla(211, 99%, 53%, 0.1);
+}
+
 /* Animations */
 @keyframes pulse-glow {
   0%, 100% {

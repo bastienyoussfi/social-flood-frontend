@@ -5,13 +5,13 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { PlatformCard } from '@/components/PlatformCard';
 import { useAuth } from '@/contexts/AuthContext';
-import { 
-  availablePlatforms, 
+import {
+  availablePlatforms,
   comingSoonPlatforms,
   getConnections,
   type SocialConnection,
 } from '@/lib/api';
-import { Zap, RefreshCw, Loader2, Server, CheckCircle2, LogOut, User } from 'lucide-react';
+import { Zap, RefreshCw, Loader2, Server, CheckCircle2, LogOut, User, PenSquare } from 'lucide-react';
 
 function App() {
   const { user, signOut, isLoading: authLoading } = useAuth();
@@ -115,7 +115,13 @@ function App() {
                 <p className="text-sm text-muted-foreground">{user?.email}</p>
               </div>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
+              <Link to="/post">
+                <Button className="h-10">
+                  <PenSquare className="h-4 w-4" />
+                  Create Post
+                </Button>
+              </Link>
               <Button
                 variant="outline"
                 onClick={handleRefreshAll}
